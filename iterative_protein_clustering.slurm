@@ -26,7 +26,7 @@ output_dir=$(realpath "$2")
 result_name="$3"
 
 module purge
-module load python/3.10.4
+module load python/3.12.4
 module load mmseqs2/oct24
 module load muscle/5.3
 module load perl/5.36.0
