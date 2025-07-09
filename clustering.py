@@ -479,7 +479,7 @@ fasta_files = [
 for file in fasta_files:
     cmdMuscle = f"""
     muscle -super5 {file} -output {finalMSA}/{file.stem}.afa
-    perl reformat.pl fas sto {finalMSA}/{file.stem}.afa {finalSto}/{file.stem}.sto
+    perl {REFORMAT_PL} fas sto {finalMSA}/{file.stem}.afa {finalSto}/{file.stem}.sto
     """
     subp.run(cmdMuscle, shell=True, check=True, executable="/bin/bash")
 
