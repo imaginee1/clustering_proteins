@@ -25,27 +25,13 @@ input_file=$(realpath "$1")
 output_dir=$(realpath "$2")
 result_name="$3"
 
-# Load modules
 module purge
-module load miniconda3/23.11.0
+module load python/3.10.4
 module load mmseqs2/oct24
 module load muscle/5.3
 module load perl/5.36.0
 
-# Source Conda
-source $EBROOTMINICONDA3/etc/profile.d/conda.sh
-
-# Create env (if not already created)
-# bash setup_envs.sh  # Uncomment only if setup_envs.sh is idempotent
-
-# Activate environment
-conda activate proti_clust  # Replace with your env name
-
-#load mmseqs2
-#module load mmseqs2/oct24
-
-# Go to working directory
-cd $SLURM_SUBMIT_DIR
+source ~/myenvs/proti_clust_env/bin/activate
 
 # Run clustering.py with arguments
 python /path/to/clustering.py \
