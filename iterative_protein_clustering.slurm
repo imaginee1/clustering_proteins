@@ -2,10 +2,10 @@
 
 # job standard output will go to the file slurm-%j.out (where %j is the job ID)
 
-#SBATCH --partition=lonepeak  
-#SBATCH --account=jacksonr
-#SBATCH --qos=lonepeak
-#SBATCH --time=24:00:00   # walltime limit (HH:MM:SS)
+#SBATCH --partition=notchpeak-shared-short 
+#SBATCH --account=notchpeak-shared-short
+#SBATCH --qos=notchpeak-shared-short
+#SBATCH --time=8:00:00   # walltime limit (HH:MM:SS)
 #SBATCH --mem=64000 # memory given in MB
 #SBATCH --nodes=1   # number of nodes
 # #SBATCH --ntasks-per-node=16   # 20 processor core(s) per node X 2 threads per core
