@@ -15,19 +15,33 @@
 # #SBATCH --mail-type=END
 # #SBATCH --mail-type=FAIL
 
-# load modules
+# Load your environment manager
+module load miniconda3/23.11.0
+
+# Load modules
+module purge
+module load miniconda3/23.11.0
 module load mmseqs2/oct24
 module load muscle/5.3
 module load perl/5.36.0
 
-# Load your environment manager
-module load miniconda3/23.11.0
+# Source Conda
+source $EBROOTMINICONDA3/etc/profile.d/conda.sh
 
-# Activate the environment
-source activate proti_clust
+# Create env (if not already created)
+# bash setup_envs.sh  # Uncomment only if setup_envs.sh is idempotent
 
-# Run the script
-python3 /path/to/iterative_clustering.py \
-  --input-file "$INPUT_FASTA" \
-  --output-dir "$OUTDIR" \
-  --result-name "cluster_output"
+# Activate environment
+conda activate proti_clust  # Replace with your env name
+
+# Go to working directory
+cd $SLURM_SUBMIT_DIR
+
+# Run clustering.py with arguments
+python /path/to/clustering.py \
+  --input-file /path/to/input.fasta \
+  --output-dir /path/to/output_dir \
+  --result-name result_run_01 \
+  --cluster-sensitivity 7.5 \
+  --search-sensitivity 7.5 \
+  --max-iter-strict 10
