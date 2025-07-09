@@ -28,7 +28,6 @@ result_name="$3"
 # Load modules
 module purge
 module load miniconda3/23.11.0
-module load mmseqs2/oct24
 module load muscle/5.3
 module load perl/5.36.0
 
@@ -40,6 +39,9 @@ source $EBROOTMINICONDA3/etc/profile.d/conda.sh
 
 # Activate environment
 conda activate proti_clust  # Replace with your env name
+
+#load mmseqs2
+module load mmseqs2/oct24
 
 # Go to working directory
 cd $SLURM_SUBMIT_DIR
