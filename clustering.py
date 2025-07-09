@@ -318,9 +318,6 @@ def mmSearch(input_name: Path, iter_name: str, out_direct: Path, inarg=inarg):
         """
         subp.run(cmdOne, shell=True, check=True, executable="/bin/bash")
     
-    # combines all .m8 files across iteration
-    cmdTwo = f"cat {out_direct}/{iter_name}/*/ProRepSeqSearchMate/*.m8 > {out_direct}/{iter_name}/all_iter_hits.m8"
-    subp.run(cmdTwo, shell=True, check=True, executable="/bin/bash")
     
     
 
@@ -425,7 +422,10 @@ while weighted_jaccard < 1 and iter_var < inarg.max_iter_strict:
         stoicProfile(databayes, strict_iter, out_direct=output_path)
         mmSearch(databayes, strict_iter, out_direct=output_path)
         
-        
+    # combines all .m8 files across iteration
+    cmdMate = f"cat {out_direct}/{iter_name}/*/ProRepSeqSearchMate/*.m8 > {out_direct}/{iter_name}/all_iter_hits.m8"
+    subp.run(cmdMate, shell=True, check=True, executable="/bin/bash")
+    
     cluster_set2, datab_names, finalDbDir = conComp(strict_iter, out_direct=output_path)
     
     total_score = 0
