@@ -188,7 +188,8 @@ log_path = finalPath / f"{inarg.result_name}.log"
 logging.basicConfig(
     filename=log_path,
     level=logging.INFO,        # log messages INFO and above
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    force=True
 )
 
 ###############################################################################
