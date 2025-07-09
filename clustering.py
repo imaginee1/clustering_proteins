@@ -415,7 +415,7 @@ weighted_jaccard = 0
 
 while weighted_jaccard < 1 and iter_var < inarg.max_iter_strict:
     logging.info(f"strict clustering iteration {iter_var}")
-    strict_iter = f"strict{iter_var}"
+    strict_iter = f"strict_{iter_var}"
     for databayes in datab_names:
         mmCluster(databayes, "db", strict_iter, out_direct=output_path)
         muscleAlign(databayes, strict_iter, out_direct=output_path)
@@ -423,7 +423,7 @@ while weighted_jaccard < 1 and iter_var < inarg.max_iter_strict:
         mmSearch(databayes, strict_iter, out_direct=output_path)
         
     # combines all .m8 files across iteration
-    cmdMate = f"cat {out_direct}/{iter_name}/*/ProRepSeqSearchMate/*.m8 > {out_direct}/{iter_name}/all_iter_hits.m8"
+    cmdMate = f"cat {out_direct}/{strict_iter}/*/ProRepSeqSearchMate/*.m8 > {out_direct}/{strict_iter}/all_iter_hits.m8"
     subp.run(cmdMate, shell=True, check=True, executable="/bin/bash")
     
     cluster_set2, datab_names, finalDbDir = conComp(strict_iter, out_direct=output_path)
