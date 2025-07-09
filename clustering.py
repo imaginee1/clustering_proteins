@@ -423,7 +423,7 @@ while weighted_jaccard < 1 and iter_var < inarg.max_iter_strict:
         mmSearch(databayes, strict_iter, out_direct=output_path)
         
     # combines all .m8 files across iteration
-    cmdMate = f"cat {out_direct}/{strict_iter}/*/ProRepSeqSearchMate/*.m8 > {out_direct}/{strict_iter}/all_iter_hits.m8"
+    cmdMate = f"cat {output_path}/{strict_iter}/*/ProRepSeqSearchMate/*.m8 > {output_path}/{strict_iter}/all_iter_hits.m8"
     subp.run(cmdMate, shell=True, check=True, executable="/bin/bash")
     
     cluster_set2, datab_names, finalDbDir = conComp(strict_iter, out_direct=output_path)
