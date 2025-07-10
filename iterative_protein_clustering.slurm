@@ -6,7 +6,7 @@
 #SBATCH --account=notchpeak-shared-short
 #SBATCH --qos=notchpeak-shared-short
 #SBATCH --time=8:00:00   # walltime limit (HH:MM:SS)
-#SBATCH --mem=64000 # memory given in MB
+#SBATCH --mem=128000 # memory given in MB
 #SBATCH --nodes=1   # number of nodes
 # #SBATCH --ntasks-per-node=16   # 20 processor core(s) per node X 2 threads per core
 #SBATCH --job-name="itercust"
