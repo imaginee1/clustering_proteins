@@ -180,12 +180,16 @@ refDbDir.mkdir(parents=True, exist_ok=True)
 user = os.environ.get("USER", "nouser")
 job_id = os.environ.get("SLURM_JOB_ID", "nojobid")
 
-# Prefer CHPC's pre-mounted $SCRATCH if available
-scratch_base = Path(os.environ.get("SCRATCH")) or Path(f"/scratch/general/vast/{user}/{job_id}")
+# Safely handle unset SCRATCH environment variable
+scratch_env = os.environ.get("SCRATCH")
+if scratch_env:
+    scratch_base = Path(scratch_env)
+else:
+    scratch_base = Path(f"/scratch/general/vast/{user}/{job_id}")
 
-# Fallback to /tmp if no writable scratch
+# Use scratch_base, fallback to /tmp if needed
 if scratch_base:
-    tmpDir = Path(scratch_base) / "tmpDir"
+    tmpDir = scratch_base / "tmpDir"
 else:
     tmpDir = Path(f"/tmp/{user}/test_scratch/tmpDir")
 
