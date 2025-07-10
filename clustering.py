@@ -181,7 +181,7 @@ user = os.environ.get("USER", "nouser")
 job_id = os.environ.get("SLURM_JOB_ID", "nojobid")
 
 # Prefer CHPC's pre-mounted $SCRATCH if available
-scratch_base = os.environ.get("SCRATCH")
+scratch_base = Path(os.environ.get("SCRATCH")) or Path(f"/scratch/general/vast/{user}/{job_id}")
 
 # Fallback to /tmp if no writable scratch
 if scratch_base:
