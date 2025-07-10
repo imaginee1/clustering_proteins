@@ -177,25 +177,22 @@ refDbDir = output_path / "refDbDir"
 refDbDir.mkdir(parents=True, exist_ok=True)
 
 ######################################
-
-# Get SLURM job ID and username (or set sensible fallback)
-job_id = os.environ.get("SLURM_JOB_ID", "nojobid")
 user = os.environ.get("USER", "nouser")
+job_id = os.environ.get("SLURM_JOB_ID", "nojobid")
 
-# Determine scratch path: prefer /scratch if job ID exists, fallback to /tmp
-if job_id != "nojobid":
-    tmpDir = Path(f"/scratch/{user}/{job_id}/tmpDir")
+# Prefer CHPC's pre-mounted $SCRATCH if available
+scratch_base = os.environ.get("SCRATCH")
+
+# Fallback to /tmp if no writable scratch
+if scratch_base:
+    tmpDir = Path(scratch_base) / "tmpDir"
 else:
     tmpDir = Path(f"/tmp/{user}/test_scratch/tmpDir")
 
-# Create the scratch directory if it doesn't exist
 tmpDir.mkdir(parents=True, exist_ok=True)
-
-# Set TMPDIR so subprocesses (like MMseqs2) use it
 os.environ["TMPDIR"] = str(tmpDir)
 
 print(f"Scratch directory set up at: {tmpDir}")
-
 ######################################
 
 
