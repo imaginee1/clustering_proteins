@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# job standard output will go to the file slurm-%j.out (where %j is the job ID)
-
-#SBATCH --partition=notchpeak-shared-short 
-#SBATCH --account=notchpeak-shared-short
-#SBATCH --qos=notchpeak-shared-short
-#SBATCH --time=8:00:00         # Walltime limit (HH:MM:SS)
+#SBATCH --partition=lonepeak
+#SBATCH --account=jacksonr
+#SBATCH --qos=lonepeak
+#SBATCH --time=24:00:00         # Walltime limit (HH:MM:SS)
 #SBATCH --mem=32000            # Memory in MB (32 GB)
-#SBATCH --nodes=1              # One shared node
-#SBATCH --ntasks=1             # One task (i.e., one process)
-#SBATCH --cpus-per-task=16     # 16 threads for that one task
+#SBATCH --nodes=1              # One node
+#SBATCH -o slurm-%j.out-%N # name of the stdout, using the job number (%j) and the first node (%N)
+#SBATCH --ntasks=1             # One task (single process)
+#SBATCH --cpus-per-task=24     # 24 CPUs (threads) for the task
 #SBATCH --job-name="itercust"  # Job name
 # #SBATCH --mail-user=A02353507@usu.edu
 # #SBATCH --mail-type=BEGIN
 # #SBATCH --mail-type=END
 # #SBATCH --mail-type=FAIL
+
 
 # Check if arguments were provided
 if [ "$#" -ne 3 ]; then
@@ -37,7 +37,7 @@ module load perl/5.36.0
 export MMSEQS_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
 source ~/myenvs/proti_clust_env/bin/activate
-#pip install networkx
+# pip install networkx
 
 # Run clustering.py with arguments
 python3 "$cluster" \
