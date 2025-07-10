@@ -5,12 +5,13 @@
 #SBATCH --partition=notchpeak-shared-short 
 #SBATCH --account=notchpeak-shared-short
 #SBATCH --qos=notchpeak-shared-short
-#SBATCH --time=8:00:00   # walltime limit (HH:MM:SS)
-#SBATCH --mem=32000 # memory given in MB
-#SBATCH --nodes=1   # number of nodes
-# #SBATCH --ntasks-per-node=16   # 20 processor core(s) per node X 2 threads per core
-#SBATCH --job-name="itercust"
-# #SBATCH --mail-user=A02353507@usu.edu   # insert email address
+#SBATCH --time=8:00:00         # Walltime limit (HH:MM:SS)
+#SBATCH --mem=32000            # Memory in MB (32 GB)
+#SBATCH --nodes=1              # One shared node
+#SBATCH --ntasks=1             # One task (i.e., one process)
+#SBATCH --cpus-per-task=16     # 16 threads for that one task
+#SBATCH --job-name="itercust"  # Job name
+# #SBATCH --mail-user=A02353507@usu.edu
 # #SBATCH --mail-type=BEGIN
 # #SBATCH --mail-type=END
 # #SBATCH --mail-type=FAIL
@@ -33,8 +34,10 @@ module load mmseqs2/oct24
 module load muscle/5.3
 module load perl/5.36.0
 
-#source ~/myenvs/proti_clust_env/bin/activate
-pip install networkx
+export MMSEQS_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+source ~/myenvs/proti_clust_env/bin/activate
+#pip install networkx
 
 # Run clustering.py with arguments
 python3 "$cluster" \
