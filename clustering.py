@@ -14,6 +14,8 @@ import networkx as nx
 from collections import defaultdict
 from typing import List, Set, Tuple
 import logging
+import os
+
 
 parser = ap.ArgumentParser()
 
@@ -96,7 +98,7 @@ parser.add_argument("--search-sensitivity",
                     type=float,
                     dest="search_sens",
                     help="desired mmseqs profile-sequence search sensitivity (1.0 ≤ s ≤ 9.5)", 
-                    default=float(7.5))
+                    default=float(8.5))
 
 
 parser.add_argument("--max-iter-strict",
@@ -170,14 +172,35 @@ output_path = output_resolved / inarg.result_name
 output_path.mkdir(parents=True, exist_ok=True)
 
 # Paths
-inputDbDir = output_path / "inputDbDir"
-tmpDir = output_path / "tmpDir"
+# inputDbDir = output_path / "inputDbDir"
 refDbDir = output_path / "refDbDir"
+refDbDir.mkdir(parents=True, exist_ok=True)
+
+######################################
+
+# Get SLURM job ID and username (or set sensible fallback)
+job_id = os.environ.get("SLURM_JOB_ID", "nojobid")
+user = os.environ.get("USER", "nouser")
+
+# Determine scratch path: prefer /scratch if job ID exists, fallback to /tmp
+if job_id != "nojobid":
+    tmpDir = Path(f"/scratch/{user}/{job_id}/tmpDir")
+else:
+    tmpDir = Path(f"/tmp/{user}/test_scratch/tmpDir")
+
+# Create the scratch directory if it doesn't exist
+tmpDir.mkdir(parents=True, exist_ok=True)
+
+# Set TMPDIR so subprocesses (like MMseqs2) use it
+os.environ["TMPDIR"] = str(tmpDir)
+
+print(f"Scratch directory set up at: {tmpDir}")
+
+######################################
 
 
 #inputDbDir.mkdir(parents=True, exist_ok=True)
-tmpDir.mkdir(parents=True, exist_ok=True)
-refDbDir.mkdir(parents=True, exist_ok=True)
+
 
 
 
@@ -313,12 +336,12 @@ def mmSearch(input_name: Path, iter_name: str, out_direct: Path, inarg=inarg):
     
     for clusters in clusterList:
         cmdOne = f"""
-        mmseqs search {genPath}/AlProfile/{clusters} {genPath}/RepDb/{stems} {genPath}/ProRepSeqSearchDb/{clusters} {tmpDir} -s {sens} --num-iterations 4 -e 1e-4 -c 0.7
+        mmseqs search {genPath}/AlProfile/{clusters} {genPath}/RepDb/{stems} {genPath}/ProRepSeqSearchDb/{clusters} {tmpDir} -s {sens} -e 1e-4 -c 0.7
         mmseqs convertalis {genPath}/AlProfile/{clusters} {genPath}/RepDb/{stems} {genPath}/ProRepSeqSearchDb/{clusters} {genPath}/ProRepSeqSearchMate/{clusters}.m8
         """
         subp.run(cmdOne, shell=True, check=True, executable="/bin/bash")
     
-    
+    # --num-iterations 4
     
 
 def conComp(iter_name: str, out_direct: Path) -> Tuple[List[Set[str]], List[Path], Path]:
