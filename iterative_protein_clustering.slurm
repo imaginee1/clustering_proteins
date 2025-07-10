@@ -1,14 +1,14 @@
 #!/bin/bash
 
-#SBATCH --partition=lonepeak
+#SBATCH --partition=kingspeak
 #SBATCH --account=jacksonr
-#SBATCH --qos=lonepeak
+# #SBATCH --qos=lonepeak
 #SBATCH --time=24:00:00         # Walltime limit (HH:MM:SS)
 #SBATCH --mem=32000            # Memory in MB (32 GB)
 #SBATCH --nodes=1              # One node
 #SBATCH -o slurm-%j.out-%N # name of the stdout, using the job number (%j) and the first node (%N)
 #SBATCH --ntasks=1             # One task (single process)
-#SBATCH --cpus-per-task=24     # 24 CPUs (threads) for the task
+#SBATCH --cpus-per-task=16     # 24 CPUs (threads) for the task
 #SBATCH --job-name="itercust"  # Job name
 # #SBATCH --mail-user=A02353507@usu.edu
 # #SBATCH --mail-type=BEGIN
