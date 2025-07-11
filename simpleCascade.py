@@ -282,7 +282,7 @@ subp.run([
     "-e", "1e-4",
     "-c", str(inarg.search_cov),
     "--cov-mode", "0",
-    "--min-seq-id", "0.15"
+    "--min-seq-id", "0.10"
 ], check=True)
 
 merged_profile_clust = profile_dir / "merged_profile_clust"
