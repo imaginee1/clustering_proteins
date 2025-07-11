@@ -257,8 +257,6 @@ subp.run([
     str(input_db),
     str(cluster_db),
     str(merged_profile_db),
-    "--match-mode", "1",
-    "--match-ratio", "1"
 ], check=True)
 
 
