@@ -292,7 +292,7 @@ subp.run([
     str(merged_profile_db),
     str(merged_profile_result),
     str(merged_profile_clust),
-    "--cluster-mode", "1"
+    "--cluster-mode", "0"
 ], check=True)
 
 
