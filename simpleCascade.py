@@ -384,7 +384,7 @@ index_file_list = [f for f in index_path.glob("*.txt")]
 cluster_subdb = output_path / "cluster_subdb"
 cluster_subdb.mkdir(parents=True, exist_ok=True)
 
-cluster_fastas = finalPath / "initial_cluster_fastas"
+cluster_fastas = finalPath / "cluster_fastas"
 cluster_fastas.mkdir(parents=True, exist_ok=True)
 
 for file_name in index_file_list:
@@ -418,5 +418,7 @@ for i, file_name in enumerate(fasta_file_list):
         "-threads", str(num_threads)
     ])
     
-
-
+cmd = f"""
+find {cluster_MSAs} -type f -name "*.afa" -exec bash -c 'echo -e "$(basename "{{}}")\t$(grep -c "^>" "{{}}")"' \; | sort -k2,2nr > cluster_member_counts.tsv
+"""
+subp.run(cmd, shell=True, executable=True)
