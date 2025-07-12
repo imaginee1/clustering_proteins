@@ -4,7 +4,7 @@
 #SBATCH --account=notchpeak-shared-short              
 #SBATCH --qos=notchpeak-shared-short                   
 # #SBATCH -C rom                              
-#SBATCH --time=2:00:00                     
+#SBATCH --time=8:00:00                     
 #SBATCH --mem=64000                        
 #SBATCH --nodes=1                           
 #SBATCH --ntasks=1                          
