@@ -32,6 +32,7 @@ cluster=/uufs/chpc.utah.edu/common/home/u6054205/JacksonLab/scripts-git/clusteri
 module purge
 module load python/3.12.4
 module load mmseqs2/oct24
+module load muscle/5.3
 
 # Set MMseqs to use all available cores (if --cpus-per-task is used)
 export MMSEQS_NUM_THREADS=${SLURM_CPUS_PER_TASK:-1}
