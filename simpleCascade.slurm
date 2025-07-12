@@ -57,7 +57,9 @@ echo "Using TMPDIR: $TMPDIR"
 python3 "$cluster" \
   --input-file "${input_file}" \
   --output-dir "${output_dir}" \
-  --result-name "${result_name}"
+  --result-name "${result_name}" \
+  --cascade-sensitivity 8.5 \
+  --search-sensitivity 8.5
 
 # Optional: clean up after the run
 # rm -rf "$SCRDIR"
