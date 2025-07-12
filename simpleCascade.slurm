@@ -8,7 +8,7 @@
 #SBATCH --mem=64000                        
 #SBATCH --nodes=1                           
 #SBATCH --ntasks=1                          
-# #SBATCH --cpus-per-task=64                  
+#SBATCH --cpus-per-task=16               
 #SBATCH -o slurm-%j.out-%N                  
 #SBATCH --job-name="cascade"              
 # #SBATCH --mail-user=YOUR_EMAIL@usu.edu
@@ -36,6 +36,7 @@ module load muscle/5.3
 
 # Set MMseqs to use all available cores (if --cpus-per-task is used)
 export MMSEQS_NUM_THREADS=${SLURM_CPUS_PER_TASK:-1}
+export $SLURM_CPUS_PER_TASK
 
 # Activate your Python virtual environment
 source ~/myenvs/proti_clust_env/bin/activate
