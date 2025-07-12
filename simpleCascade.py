@@ -5,13 +5,6 @@ Created on Fri Jul 11 16:45:48 2025
 @author: imagi
 """
 
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul  3 14:10:23 2025
-
-@author: imagi
-"""
-
 import argparse as ap
 # import numpy as np
 import subprocess as subp
@@ -19,10 +12,10 @@ from pathlib import Path
 import sys
 import networkx as nx
 from collections import defaultdict
-from typing import List, Set, Tuple
+#from typing import List, Set, Tuple
 import logging
 import os
-
+#import multiprocessing
 
 parser = ap.ArgumentParser()
 
@@ -114,6 +107,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 REFORMAT_PL = SCRIPT_DIR / "reformat.pl"
 
 
+
 subp.run(f"chmod +x {REFORMAT_PL}", shell=True, check=True)
          
 ############################################
@@ -170,28 +164,8 @@ os.environ["TMPDIR"] = str(tmpDir)
 
 print(f"Temporary directory created at: {tmpDir}")
 
-"""
-user = os.environ.get("USER", "nouser")
-job_id = os.environ.get("SLURM_JOB_ID", "nojobid")
-
-# Safely handle unset SCRATCH environment variable
-scratch_env = os.environ.get("SCRATCH")
-if scratch_env:
-    scratch_base = Path(scratch_env)
-else:
-    scratch_base = Path(f"/scratch/general/vast/{user}/{job_id}")
-
-# Use scratch_base, fallback to /tmp if needed
-if scratch_base:
-    tmpDir = scratch_base / "tmpDir"
-else:
-    tmpDir = Path(f"/tmp/{user}/test_scratch/tmpDir")
-
-tmpDir.mkdir(parents=True, exist_ok=True)
-os.environ["TMPDIR"] = str(tmpDir)
-
-print(f"Scratch directory set up at: {tmpDir}")
-"""
+num_threads = os.environ.get("SLURM_CPUS_PER_TASK")
+# num_threads = str(multiprocessing.cpu_count())
 ######################################
 
 
@@ -202,6 +176,7 @@ finalPath = output_path / "results"
 finalPath.mkdir(parents=True, exist_ok=True)
 
 mmseqs = "mmseqs"
+muscle = "muscle"
 
 cascade_dir = output_path / "cascade_dir"
 cascade_dir.mkdir(parents=True, exist_ok=True)
@@ -236,7 +211,7 @@ subp.run([
     str(input_db),
     str(cluster_db),
     str(cascade_tsv)
-])
+], check=True)
 
 
 
@@ -300,33 +275,52 @@ subp.run([
     "--min-seq-id", "0.10"
 ], check=True)
 
-profile_clust = profile_dir / "profile_clust"
+#################################
+        # write m8 file #
+#################################
+
+profile_mate = profile_dir / "profile_mate_result"
 
 subp.run([
-    mmseqs, "clust",
+    mmseqs, "convertalis",
     str(profile_db),
+    str(profile_db_consensus),
     str(profile_result),
-    str(profile_clust),
-    "--cluster-mode", "0"
-], check=True)
-
-profile_tsv = finalPath / "profile-cascade_tsv.tsv"
-
-subp.run([
-    mmseqs, "createtsv",
-    str(profile_db),
-    str(profile_db),
-    str(profile_clust),
-    str(profile_tsv)
+    str(profile_mate)
 ])
 
-# also need to add the rechoosing clusters after iterating or whatever
-    # for cascades?
+hit_pairs = set()
+all_seqs = set()
+searchGraph = nx.Graph()
+
+with open(profile_mate, "r") as f:
+    for line in f:
+        query, target = line.strip().split("\t")[0:2]
+        all_seqs.update([query, target])
+        if query != target:
+            hit_pairs.add((query, target))
+
+for query, target in hit_pairs:
+    if (target, query) in hit_pairs:
+        searchGraph.add_edge(query, target)
+
+searchGraph.add_nodes_from(all_seqs)
+
+con_comp = sorted(nx.connected_components(searchGraph), key=len, reverse=True)
+
+# write a tsv
+
+profile_tsv = finalPath / "profileclust-cascade_tsv.tsv"
+
+with open(profile_tsv, "w") as out:
+    for i, components in enumerate(con_comp):
+        proclust_id = f"proclust_{i:06d}"
+        for component in components:
+            out.write(f"{proclust_id}\t{component}\n")
+
 
 # double tsv index 
 
-    # cascade_tsv = finalPath / "cascade-sequence_tsv.tsv"
-    # profile_tsv = finalPath / "profile-cascade_tsv.tsv"
 
 cascade_dict = defaultdict(list)
 
@@ -342,7 +336,7 @@ with open(profile_tsv, "r") as f:
         rep, member = line.strip().split("\t")
         profile_dict[rep].append(member)
 
-proseq_tsv = finalPath / "profile-sequence_tsv.tsv"
+proseq_tsv = finalPath / "connectedprofile-sequence_tsv.tsv"
 
 with open(proseq_tsv, "w") as out:
     for rep, intereps in profile_dict.items():
@@ -351,17 +345,78 @@ with open(proseq_tsv, "w") as out:
             for member in final_members:
                 out.write(f"{rep}\t{member}\n")
 
+input_db_lookup = cascade_dir / "cascade_step0.lookup"
 
 
 
+# loop through tsv, to write in idx using already loaded lookup
+
+lookup_dict = {}
+with open(input_db_lookup, "r") as lookup_file:
+    for line in lookup_file:
+        idx, match_name, col3 = line.strip().split("\t")
+        lookup_dict[match_name] = idx
+
+rep_to_indices = defaultdict(list)
+
+with open(proseq_tsv, "r") as tsv:
+    for line in tsv:
+        rep, seq = line.strip().split("\t")
+        idx = lookup_dict.get(seq)
+        if idx:
+            rep_to_indices[rep].append(idx)
+
+sorted_reps = sorted(rep_to_indices.items(), key=lambda item: len(item[1]), reverse=True)
+
+index_path = output_path / "profile_indices"
+index_path.mkdir(parents=True, exist_ok=True)
 
 
+for i, (rep, indices) in enumerate(sorted_reps):
+    cluster_id = f"cluster_{i:06d}.txt"  # e.g. cluster_000000.txt
+    filepath = index_path / cluster_id
+    with open(filepath, "w") as out:
+        out.write("\n".join(indices) + "\n")
 
+# now loop through reps and subdb and print fastas
+index_file_list = [f for f in index_path.glob("*.txt")]
 
+cluster_subdb = output_path / "cluster_subdb"
+cluster_subdb.mkdir(parents=True, exist_ok=True)
 
+cluster_fastas = finalPath / "initial_cluster_fastas"
+cluster_fastas.mkdir(parents=True, exist_ok=True)
 
+for file_name in index_file_list:
+    subdb_path = cluster_subdb / file_name.stem
+    subp.run([
+        mmseqs, "createsubdb",
+        str(file_name),
+        str(input_db),
+        str(subdb_path)
+    ])
+    clust_fast_path = cluster_fastas / f"{file_name.stem}.fasta"
+    subp.run([
+        mmseqs, "convert2fasta",
+        str(subdb_path),
+        str(clust_fast_path)
+    ])
 
+fasta_file_list = [f for f in cluster_fastas.glob("*.fasta")]
 
+cluster_MSAs = finalPath / "final_cluster_MSAs"
+cluster_MSAs.mkdir(parents=True, exist_ok=True)
 
+# now align all fastas with muscle
+
+for i, file_name in enumerate(fasta_file_list):
+    cluster_ids = file_name.stem
+    outfilepath =  cluster_MSAs / cluster_ids
+    subp.run([
+        muscle, "-super5", str(file_name),
+        "-output", str(outfilepath),
+        "-threads", str(num_threads)
+    ])
+    
 
 
