@@ -221,8 +221,7 @@ subp.run([
     "--cov-mode", "0",
     "--cluster-mode", "0",
     "-s", str(inarg.cascade_sens),
-    "-e", "1e-4",
-    "--cluster-steps", "3"
+    "-e", "1e-4"
 ], check=True)
 
 
