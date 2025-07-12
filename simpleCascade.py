@@ -228,55 +228,55 @@ subp.run([
 
 ## convert cluster result to profiles
 
-merged_rep_db = cascade_dir / "merged_rep_db"
+rep_db = cascade_dir / "rep_db"
 
 subp.run([
     mmseqs, "createsubdb",
     str(cluster_db),
     str(input_db),
-    str(merged_rep_db)
+    str(rep_db)
 ], check=True)
 
 input_db_h = input_db.with_name(input_db.name + "_h")
-merged_rep_db_h = merged_rep_db.with_name(merged_rep_db.name + "_h")
+rep_db_h = rep_db.with_name(rep_db.name + "_h")
 
 subp.run([
     mmseqs, "createsubdb",
     str(cluster_db),
     str(input_db_h),
-    str(merged_rep_db_h)
+    str(rep_db_h)
 ], check=True)
 
 profile_dir = output_path / "profile_dir"
 profile_dir.mkdir(parents=True, exist_ok=True)
 
-merged_profile_db = profile_dir / "merged_profile_db"
+profile_db = profile_dir / "profile_db"
 
 subp.run([
     mmseqs, "result2profile",
-    str(merged_rep_db),
+    str(rep_db),
     str(input_db),
     str(cluster_db),
-    str(merged_profile_db),
+    str(profile_db),
 ], check=True)
 
 
 ## profile-profile search
-merged_profile_db_cons = profile_dir / "merged_profile_db_cons"
+profile_db_consensus = profile_dir / "profile_db_consensus"
 
 subp.run([
     mmseqs, "profile2consensus",
-    str(merged_profile_db),
-    str(merged_profile_db_cons)
+    str(profile_db),
+    str(profile_db_consensus)
 ], check=True)
 
-merged_profile_result = profile_dir / "merged_profile_result"
+profile_result = profile_dir / "profile_result"
 
 subp.run([
     mmseqs, "search",
-    str(merged_profile_db),
-    str(merged_profile_db_cons),
-    str(merged_profile_result),
+    str(profile_db),
+    str(profile_db_consensus),
+    str(profile_result),
     str(tmpDir),
     "--add-self-matches", "-a",
     "-s", str(inarg.search_sens),
@@ -286,18 +286,26 @@ subp.run([
     "--min-seq-id", "0.10"
 ], check=True)
 
-merged_profile_clust = profile_dir / "merged_profile_clust"
+profile_clust = profile_dir / "profile_clust"
 
 subp.run([
     mmseqs, "clust",
-    str(merged_profile_db),
-    str(merged_profile_result),
-    str(merged_profile_clust),
+    str(profile_db),
+    str(profile_result),
+    str(profile_clust),
     "--cluster-mode", "0",
     "--cluster-steps", "3"
 ], check=True)
 
+profile_tsv = finalPath / "initial_profile_tsv.tsv"
 
+subp.run([
+    mmseqs, "createtsv",
+    str(profile_db),
+    str(profile_db),
+    str(profile_clust),
+    str(profile_tsv)
+])
 
 
 
