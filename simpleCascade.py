@@ -345,8 +345,8 @@ with open(profile_tsv, "r") as f:
 proseq_tsv = finalPath / "profile-sequence_tsv.tsv"
 
 with open(proseq_tsv, "w") as out:
-    for rep, interep in profile_dict.items():
-        for interep in cascade_dict:
+    for rep, intereps in profile_dict.items():
+        for interep in intereps:
             final_members = cascade_dict.get(interep, [])
             for member in final_members:
                 out.write(f"{rep}\t{member}\n")
