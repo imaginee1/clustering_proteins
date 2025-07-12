@@ -221,7 +221,8 @@ subp.run([
     "--cov-mode", "0",
     "--cluster-mode", "0",
     "-s", str(inarg.cascade_sens),
-    "-e", "1e-4"
+    "-e", "1e-4",
+    "--cluster-steps", "3"
 ], check=True)
 
 
@@ -292,7 +293,8 @@ subp.run([
     str(merged_profile_db),
     str(merged_profile_result),
     str(merged_profile_clust),
-    "--cluster-mode", "0"
+    "--cluster-mode", "0",
+    "--cluster-steps", "3"
 ], check=True)
 
 
