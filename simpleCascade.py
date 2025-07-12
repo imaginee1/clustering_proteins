@@ -410,7 +410,7 @@ cluster_MSAs.mkdir(parents=True, exist_ok=True)
 # now align all fastas with muscle
 
 for i, file_name in enumerate(fasta_file_list):
-    cluster_ids = file_name.stem
+    cluster_ids = f"{file_name.stem}.afa"
     outfilepath =  cluster_MSAs / cluster_ids
     subp.run([
         muscle, "-super5", str(file_name),
