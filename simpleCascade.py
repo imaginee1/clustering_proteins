@@ -282,8 +282,7 @@ subp.run([
     "-e", "1e-4",
     "-c", str(inarg.search_cov),
     "--cov-mode", "0",
-    "--min-seq-id", "0.10",
-    "--cluster-steps", "3"
+    "--min-seq-id", "0.10"
 ], check=True)
 
 profile_clust = profile_dir / "profile_clust"
