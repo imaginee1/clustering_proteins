@@ -221,8 +221,23 @@ subp.run([
     "--cov-mode", "0",
     "--cluster-mode", "0",
     "-s", str(inarg.cascade_sens),
-    "-e", "1e-4"
+    "-e", "1e-4",
+    "--cluster-steps", "3",
+    "--cluster-reassign"
 ], check=True)
+
+## print tsv
+
+cascade_tsv = finalPath / "cascade-sequence_tsv.tsv"
+
+subp.run([
+    mmseqs, "createtsv",
+    str(input_db),
+    str(input_db),
+    str(cluster_db),
+    str(cascade_tsv)
+])
+
 
 
 ## convert cluster result to profiles
@@ -295,7 +310,7 @@ subp.run([
     "--cluster-mode", "0"
 ], check=True)
 
-profile_tsv = finalPath / "initial_profile_tsv.tsv"
+profile_tsv = finalPath / "profile-cascade_tsv.tsv"
 
 subp.run([
     mmseqs, "createtsv",
@@ -305,17 +320,36 @@ subp.run([
     str(profile_tsv)
 ])
 
+# also need to add the rechoosing clusters after iterating or whatever
+    # for cascades?
 
+# double tsv index 
 
+    # cascade_tsv = finalPath / "cascade-sequence_tsv.tsv"
+    # profile_tsv = finalPath / "profile-cascade_tsv.tsv"
 
+cascade_dict = defaultdict(list)
 
+with open(cascade_tsv, "r") as f:
+    for line in f:
+        rep, member = line.strip().split("\t")
+        cascade_dict[rep].append(member)
 
+profile_dict = defaultdict(list)
 
+with open(profile_tsv, "r") as f:
+    for line in f:
+        rep, member = line.strip().split("\t")
+        profile_dict[rep].append(member)
 
+proseq_tsv = finalPath / "profile-sequence_tsv.tsv"
 
-
-
-
+with open(proseq_tsv, "w") as out:
+    for rep, interep in profile_dict:
+        for interep in cascade_dict:
+            final_members = cascade_dict.get(interep, [])
+            for member in final_members:
+                out.write(f"{rep}\t{member}\n")
 
 
 
