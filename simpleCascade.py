@@ -283,7 +283,8 @@ subp.run([
     "-e", "1e-4",
     "-c", str(inarg.search_cov),
     "--cov-mode", "0",
-    "--min-seq-id", "0.10"
+    "--min-seq-id", "0.10",
+    "--cluster-steps", "3"
 ], check=True)
 
 profile_clust = profile_dir / "profile_clust"
@@ -293,8 +294,7 @@ subp.run([
     str(profile_db),
     str(profile_result),
     str(profile_clust),
-    "--cluster-mode", "0",
-    "--cluster-steps", "3"
+    "--cluster-mode", "0"
 ], check=True)
 
 profile_tsv = finalPath / "initial_profile_tsv.tsv"
