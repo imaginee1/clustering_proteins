@@ -433,4 +433,4 @@ for i, file_name in enumerate(fasta_file_list):
 cmd = f"""
 find {cluster_MSAs} -type f -name "*.afa" -exec bash -c 'echo -e "$(basename "{{}}")\t$(grep -c "^>" "{{}}")"' \; | sort -k2,2nr > cluster_member_counts.tsv
 """
-subp.run(cmd, executable=True, shell="/bin/bash")
+subp.run(cmd, shell=True, executable="/bin/bash")
