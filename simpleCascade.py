@@ -63,7 +63,19 @@ parser.add_argument("--search-cov",
                     help="decimal coverage threshold for strict clustering", 
                     default=float(0.7))
 
+parser.add_argument("--cascade-eval",
+                    action="store",
+                    type=str,
+                    dest="cascade_eval",
+                    help="decimal coverage threshold for strict clustering", 
+                    default="1e-5")
 
+parser.add_argument("--search-eval",
+                    action="store",
+                    type=str,
+                    dest="search_eval",
+                    help="decimal coverage threshold for strict clustering", 
+                    default="1e-5")
 
 # optional optional arguments
 
@@ -287,7 +299,7 @@ subp.run([
     str(profile_db_consensus),
     str(profile_result),
     str(profile_mate)
-])
+], check=True)
 
 hit_pairs = set()
 all_seqs = set()
@@ -421,4 +433,4 @@ for i, file_name in enumerate(fasta_file_list):
 cmd = f"""
 find {cluster_MSAs} -type f -name "*.afa" -exec bash -c 'echo -e "$(basename "{{}}")\t$(grep -c "^>" "{{}}")"' \; | sort -k2,2nr > cluster_member_counts.tsv
 """
-subp.run(cmd, shell=True, executable=True)
+subp.run(cmd, executable=True, shell="/bin/bash")
