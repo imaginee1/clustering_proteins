@@ -208,7 +208,7 @@ subp.run([
     "--cov-mode", "0",
     "--cluster-mode", "0",
     "-s", str(inarg.cascade_sens),
-    "-e", "1e-4",
+    "-e", str(inarg.cascade_eval),
     "--cluster-steps", "3",
     "--cluster-reassign"
 ], check=True)
@@ -281,7 +281,7 @@ subp.run([
     str(tmpDir),
     "--add-self-matches", "-a",
     "-s", str(inarg.search_sens),
-    "-e", "1e-4",
+    "-e", str(inarg.search_eval),
     "-c", str(inarg.search_cov),
     "--cov-mode", "0",
     "--min-seq-id", "0.10"
