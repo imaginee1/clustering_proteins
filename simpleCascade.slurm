@@ -62,8 +62,8 @@ python3 "$cluster" \
   --result-name "${result_name}" \
   --cascade-sensitivity 7.5 \
   --search-sensitivity 7.5 \
-  --cascade-eval 1e-5 \
-  --search-eval 1e-10
+  --cascade-eval 1e-6 \
+  --search-eval 1e-18
 
 # Optional: clean up after the run
 # rm -rf "$SCRDIR"
