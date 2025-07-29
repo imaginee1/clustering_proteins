@@ -18,7 +18,7 @@
 
 module load blast/2.11.0
 
-psiblast -in_pssm 	cas12a2_3.pssm  -db nr \
+psiblast -in_pssm cas12a2_3.pssm -db nr \
   -out results.out -evalue 1e-5 -num_threads 8 -outfmt 6
 
 
