@@ -63,6 +63,13 @@ parser.add_argument("--search-cov",
                     help="decimal coverage threshold for strict clustering", 
                     default=float(0.7))
 
+parser.add_argument("--search-id",
+                    action="store",
+                    type=float,
+                    dest="search_id",
+                    help="decimal coverage threshold for strict clustering", 
+                    default=float(0.1))
+
 parser.add_argument("--cascade-eval",
                     action="store",
                     type=str,
@@ -284,7 +291,7 @@ subp.run([
     "-e", str(inarg.search_eval),
     "-c", str(inarg.search_cov),
     "--cov-mode", "0",
-    "--min-seq-id", "0.10"
+    "--min-seq-id", str(inarg.search_id)
 ], check=True)
 
 #################################
