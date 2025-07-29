@@ -66,7 +66,8 @@ python3 "$cluster" \
   --search-eval 1e-6 \
   --min-clust-id 0.5 \
   --min-clust-cov 0.9 \
-  --search-cov 0.8
+  --search-cov 0.8 \
+  --search-id 0.3
 
 # Optional: clean up after the run
 # rm -rf "$SCRDIR"
