@@ -64,10 +64,10 @@ python3 "$cluster" \
   --search-sensitivity 7.5 \
   --cascade-eval 1e-6 \
   --search-eval 1e-6 \
-  --min-clust-id 0.5 \
-  --min-clust-cov 0.9 \
-  --search-cov 0.8 \
-  --search-id 0.3
+  --min-clust-id 0.3 \
+  --min-clust-cov 0.8 \
+  --search-cov 0.7 \
+  --search-id 0.1
 
 # Optional: clean up after the run
 # rm -rf "$SCRDIR"
